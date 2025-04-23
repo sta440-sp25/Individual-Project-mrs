@@ -154,17 +154,20 @@ because while the \texttt{quality} response variable has natural order
 of responses numbered 1-5, the intervals between levels are not
 guaranteed to be equal. For example, the difference between ``very
 dissatisfied'' and ``dissatisfied'' (1-2) may not be the same as the
-difference between ``neutral'' and ``satisfied'' (3-4). The associated
-summary table output can be seen in Table 1. Seeing as quality of life
-is not solely dependent on the number of years living in a city, a
-second ordinal model was included to understand the interaction effect
-that years lived in Durham has with household income as seen in Table 2.
-To assess the second objective of potential relationship based on home
+difference between ``neutral'' and ``satisfied'' (3-4). The proportional
+odds assumption was met, with the associated summary table output shown
+in Table 1. Seeing as quality of life is not solely dependent on the
+number of years living in a city, a second ordinal model was included to
+understand the interaction effect that years lived in Durham has with
+household income. The proportional odds and multicollinearity assumption
+was met, with the associated summary table output shown in Table 2. To
+assess the second objective of potential relationship based on home
 ownership status and location of residence, a cumulative link model was
 included. This allowed for understanding the ordinal response variable
 \texttt{quality} based on the interaction effect of years lived in
-Durham and home ownership status with the random effect of Zip Code, as
-seen in Tables 3 and 4.
+Durham and home ownership status with the random effect of Zip Code. The
+multicollinearity assumption was met, with associated summary table
+outputs shown in Tables 3 and 4.
 
 \subparagraph{Results}\label{results}
 
@@ -188,7 +191,7 @@ are predicted to be 2.184 (e\^{}0.781) times more likely to report a
 higher satisfactory category compared to the baseline income level 1
 (under \$30,000). With p-values of 0.050 and 0.019 respectively, which
 is less than the \(\alpha = 0.05\) level, this provides statistically
-significant evidence that income level is associated with a residents
+significant evidence that income level is associated with a residents'
 reported quality of life level (Table 2).
 
 The results from the cumulative link mixed model show that none of the
@@ -299,7 +302,11 @@ years:house2 & -0.004 & 0.008 & -0.589 & 0.556 \\
 (Intercept) & Zip & Intercept & 0.09016 & 0.3003 & 14 \\
 \end{longtable}
 
-\includegraphics{Individual-Project-2_files/figure-latex/unnamed-chunk-8-1.pdf}
+\includegraphics{Individual-Project-2_files/figure-latex/tables-figures-1.pdf}
+
+Despite not having a largely significant impact on reported quality of
+life, the heatmap shows the proportion of homeowner staus based on the
+specific Zip Codes within Durham.
 
 \subparagraph{Sources:}\label{sources}
 

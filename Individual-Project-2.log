@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2025.2.1)  22 APR 2025 19:07
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2025.2.1)  22 APR 2025 20:23
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -491,35 +491,35 @@ LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 12
 (/home/guest/.TinyTeX/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 177.
+LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 180.
 (/home/guest/.TinyTeX/texmf-dist/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OML+lmm on input line 177.
+LaTeX Font Info:    Trying to load font information for OML+lmm on input line 180.
 (/home/guest/.TinyTeX/texmf-dist/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 177.
+LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 180.
 (/home/guest/.TinyTeX/texmf-dist/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 177.
+LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 180.
 (/home/guest/.TinyTeX/texmf-dist/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 177.
+(Font)              <10> on input line 180.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 177.
+(Font)              <7> on input line 180.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 177.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 177.
+(Font)              <5> on input line 180.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 180.
 (/home/guest/.TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 ) (/home/guest/.TinyTeX/texmf-dist/tex/latex/microtype/mt-msa.cfg
 File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 177.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 180.
 (/home/guest/.TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) (/home/guest/.TinyTeX/texmf-dist/tex/latex/microtype/mt-msb.cfg
@@ -529,35 +529,35 @@ File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 [1
 
 {/home/guest/.TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/home/guest/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/home/guest/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/home/guest/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}]
-LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 241.
+LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 244.
 (/home/guest/.TinyTeX/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-<Individual-Project-2_files/figure-latex/unnamed-chunk-8-1.pdf, id=20, 469.755pt x 325.215pt>
-File: Individual-Project-2_files/figure-latex/unnamed-chunk-8-1.pdf Graphic file (type pdf)
-<use Individual-Project-2_files/figure-latex/unnamed-chunk-8-1.pdf>
-Package pdftex.def Info: Individual-Project-2_files/figure-latex/unnamed-chunk-8-1.pdf  used on input line 302.
+<Individual-Project-2_files/figure-latex/tables-figures-1.pdf, id=20, 469.755pt x 325.215pt>
+File: Individual-Project-2_files/figure-latex/tables-figures-1.pdf Graphic file (type pdf)
+<use Individual-Project-2_files/figure-latex/tables-figures-1.pdf>
+Package pdftex.def Info: Individual-Project-2_files/figure-latex/tables-figures-1.pdf  used on input line 305.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 
 
 [2{/home/guest/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}]
 
-[3 <./Individual-Project-2_files/figure-latex/unnamed-chunk-8-1.pdf>] (./Individual-Project-2.aux)
+[3 <./Individual-Project-2_files/figure-latex/tables-figures-1.pdf>] (./Individual-Project-2.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 13477 strings out of 475111
- 211492 string characters out of 5764113
- 664794 words of memory out of 5000000
+ 13483 strings out of 475111
+ 211549 string characters out of 5764113
+ 665890 words of memory out of 5000000
  36200 multiletter control sequences out of 15000+600000
- 584624 words of font info for 96 fonts, out of 8000000 for 9000
+ 584873 words of font info for 99 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
- 83i,6n,93p,1017b,552s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 83i,6n,93p,1017b,550s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </home/guest/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></home/guest/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></home/guest/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></home/guest/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb></home/guest/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
-Output written on Individual-Project-2.pdf (3 pages, 151824 bytes).
+Output written on Individual-Project-2.pdf (3 pages, 152127 bytes).
 PDF statistics:
  82 PDF objects out of 1000 (max. 8388607)
  61 compressed objects within 1 object stream

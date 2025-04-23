@@ -48,7 +48,7 @@ library(dplyr)
 durham_2 <- dplyr::select(durham_1, ID, years, quality)
 ```
 
-```{r warning = FALSE, message = FALSE, echo=FALSE}
+```{r ordinal, warning = FALSE, message = FALSE, echo=FALSE}
 durham_2 <- durham_2 %>%
   mutate(quality = factor(quality, levels = 1:5, ordered = TRUE))
 
@@ -66,7 +66,14 @@ colnames(ctable_final)[colnames(ctable_final) == "t value"] <- "t-value"
 colnames(ctable_final)[colnames(ctable_final) == "p value"] <- "p-value"
 ```
 
-```{r warning = FALSE, message = FALSE, echo=FALSE}
+```{r conditions, warning = FALSE, message = FALSE, echo=FALSE}
+library(brant)
+# model_brant <- brant(model_ordinal_1)
+# summary(model_brant)
+```
+
+
+```{r ordinal-with-income, warning = FALSE, message = FALSE, echo=FALSE}
 durham_3 <- dplyr::select(durham_1, ID, years, quality, income)
 durham_3 <- durham_3 %>%
   mutate(
@@ -88,7 +95,16 @@ colnames(ctable_final_2)[colnames(ctable_final_2) == "t value"] <- "t-value"
 colnames(ctable_final_2)[colnames(ctable_final_2) == "p value"] <- "p-value"
 ```
 
-```{r warning = FALSE, message = FALSE, echo=FALSE}
+```{r conditions-2, warning = FALSE, message = FALSE, echo=FALSE}
+# model_brant_2 <- brant(model_interaction)
+# summary(model_brant_2)
+
+library(car)
+lm_check <- lm(as.numeric(quality) ~ years * income, data = durham_3)
+# vif(lm_check)
+```
+
+```{r clmm, warning = FALSE, message = FALSE, echo=FALSE}
 durham_4 <- durham_1 %>%
     filter(!is.na(`Q30  Do you own or rent your current res`) & 
          `Q30  Do you own or rent your current res` != "") %>%
@@ -102,6 +118,12 @@ durham_4 <- durham_1 %>%
 
 model_mixed <- clmm(quality ~ years * house + (1 | Zip), data = durham_4, Hess = TRUE)
 ```
+
+```{r conditions-3, warning = FALSE, message = FALSE, echo=FALSE}
+lm_check_2 <- lm(as.numeric(quality) ~ years * house, data = durham_4)
+# vif(lm_check_2)
+```
+
 
 ```{r warning = FALSE, message = FALSE, echo=FALSE}
 ranef_summary <- data.frame(
@@ -138,11 +160,11 @@ For data cleaning, all rows of relevant variables that were unreported or report
 
 ##### Methods
 
-To assess the first objective of understanding a possible association between quality of life and length of time a resident has lived in Durham, an ordinal logistic regression model was included. This is because while the `quality` response variable has natural order of responses numbered 1-5, the intervals between levels are not guaranteed to be equal. For example, the difference between “very dissatisfied” and “dissatisfied” (1-2) may not be the same as the difference between “neutral” and “satisfied” (3-4). The associated summary table output can be seen in Table 1. Seeing as quality of life is not solely dependent on the number of years living in a city, a second ordinal model was included to understand the interaction effect that years lived in Durham has with household income as seen in Table 2. To assess the second objective of potential relationship based on home ownership status and location of residence, a cumulative link model was included. This allowed for understanding the ordinal response variable `quality` based on the interaction effect of years lived in Durham and home ownership status with the random effect of Zip Code, as seen in Tables 3 and 4.
+To assess the first objective of understanding a possible association between quality of life and length of time a resident has lived in Durham, an ordinal logistic regression model was included. This is because while the `quality` response variable has natural order of responses numbered 1-5, the intervals between levels are not guaranteed to be equal. For example, the difference between “very dissatisfied” and “dissatisfied” (1-2) may not be the same as the difference between “neutral” and “satisfied” (3-4). The proportional odds assumption was met, with the associated summary table output shown in Table 1. Seeing as quality of life is not solely dependent on the number of years living in a city, a second ordinal model was included to understand the interaction effect that years lived in Durham has with household income. The proportional odds and multicollinearity assumption was met, with the associated summary table output shown in Table 2. To assess the second objective of potential relationship based on home ownership status and location of residence, a cumulative link model was included. This allowed for understanding the ordinal response variable `quality` based on the interaction effect of years lived in Durham and home ownership status with the random effect of Zip Code. The multicollinearity assumption was met, with associated summary table outputs shown in Tables 3 and 4.
 
 ##### Results
 
-The results from the first ordinal logistic regression model suggests that, holding else constant, each additional year a resident has lived in Durham is associated with 0.993 (e^-0.007) times the odds of being in a higher satisfactory category. This means that the odds of reporting greater satisfaction decrease by 0.7% for an additional year a resident lives in Durham. With a p-value of 0.037 which is less than the $\alpha = 0.05$ significance level, this provides statistically significant evidence that the number of years a resident lives in Durham is associated with their reported quality of life level (Table 1). Adding household income level as an interaction effect proved to not be statistically significant as all the `years x income` p-values were greater than the $\alpha = 0.05$ level. Holding else constant, residents in income level 3 (\$60,000 - \$99,999) are predicted to be 1.976 (e^0.681) times more likely to report a higher satisfactory category compared to the baseline income level 1 (under \$30,000). Holding else constant, residents in income level 4 (\$100,000 or more) are predicted to be 2.184 (e^0.781) times more likely to report a higher satisfactory category compared to the baseline income level 1 (under \$30,000). With p-values of 0.050 and 0.019 respectively, which is less than the $\alpha = 0.05$ level, this provides statistically significant evidence that income level is associated with a residents reported quality of life level (Table 2).
+The results from the first ordinal logistic regression model suggests that, holding else constant, each additional year a resident has lived in Durham is associated with 0.993 (e^-0.007) times the odds of being in a higher satisfactory category. This means that the odds of reporting greater satisfaction decrease by 0.7% for an additional year a resident lives in Durham. With a p-value of 0.037 which is less than the $\alpha = 0.05$ significance level, this provides statistically significant evidence that the number of years a resident lives in Durham is associated with their reported quality of life level (Table 1). Adding household income level as an interaction effect proved to not be statistically significant as all the `years x income` p-values were greater than the $\alpha = 0.05$ level. Holding else constant, residents in income level 3 (\$60,000 - \$99,999) are predicted to be 1.976 (e^0.681) times more likely to report a higher satisfactory category compared to the baseline income level 1 (under \$30,000). Holding else constant, residents in income level 4 (\$100,000 or more) are predicted to be 2.184 (e^0.781) times more likely to report a higher satisfactory category compared to the baseline income level 1 (under \$30,000). With p-values of 0.050 and 0.019 respectively, which is less than the $\alpha = 0.05$ level, this provides statistically significant evidence that income level is associated with a residents' reported quality of life level (Table 2).
 
 The results from the cumulative link mixed model show that none of the fixed effects or the interaction effect between number of years lived in Durham and home ownership status were statistically meaningful in its association with quality of life after accounting for the Zip Code. However, the standard error of 0.300 for Zip Code suggests the underlying satisfaction intercept varies slightly by neighborhood (Table 3 and 4).
 
@@ -150,7 +172,7 @@ The results from the cumulative link mixed model show that none of the fixed eff
 
 Based on the results, the models were not very effective at explaining the relationships between quality of life in Durham and the data from the residents. The large p-values caused few interpretable predictor variables, and the interpretation for `years` in Table 1 conflicted with previous research. A potential issue with the data collection is that only those interested in completing the survey were the ones recorded, it was not a mandatory response. This could lead to biased results. Asking these types of questions within the census, or another form of required response would potentially increase reliability of the models and interpretability. Future work could analyze much more of the factors that were within the survey among a residents' lifestyle in understanding quality of life (access to schooling, public safety, affordability, maintenance, etc).
 
-```{r warning = FALSE, message = FALSE, echo=FALSE}
+```{r heat-map, warning = FALSE, message = FALSE, echo=FALSE}
 durham_5 <- durham_4 %>%
   mutate(Zip = as.character(Zip))
 
@@ -176,7 +198,7 @@ durham_map <- durham_zips %>%
 
 
 ##### Appendix
-```{r warning = FALSE, message = FALSE, echo=FALSE}
+```{r tables-figures, warning = FALSE, message = FALSE, echo=FALSE}
 kable(ctable_final, digits = 3, caption = "Ordinal Logistic Regression Summary")
 knitr::kable(ctable_final_2, caption = "Ordinal Logistic Regression (Years × Income Interaction)")
 kable(coefs_df[, c("Term", "Estimate", "Standard Error", "t-value", "p_value")],
@@ -200,7 +222,7 @@ ggplot(durham_map) +
     axis.ticks = element_blank())
 ```
 
-Despite not having a largely significant impact on reported quality of life, 
+Despite not having a largely significant impact on reported quality of life, the heatmap shows the proportion of homeowner staus based on the specific Zip Codes within Durham.
 
 ##### Sources:
 - <https://live-durhamnc.opendata.arcgis.com/documents/2459a4fcb09345b1a6135321bf91eac9/about> - data source
