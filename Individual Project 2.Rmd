@@ -1,0 +1,211 @@
+---
+title: "Michael Shoichet - Individual Project"
+output: 
+  pdf_document:
+    includes:
+      in_header: preamble.tex
+    keep_tex: true
+fontsize: 4pt
+geometry: margin=0.1in
+editor: visual
+---
+
+```{r import-dataset, warning = FALSE, message = FALSE, echo=FALSE}
+library(readr)
+library(tidyverse)
+library(ggplot2)
+library(tidymodels)
+library(gridExtra)
+library(broom)
+library(knitr)
+library(lme4)
+library(dplyr)
+library(MASS)
+library(ordinal)
+library(broom.mixed)
+
+durham <- read_csv("durham.csv")
+```
+
+```{r warning = FALSE, message = FALSE, echo=FALSE}
+durham_1 <- durham %>%
+  filter(!is.na(`Q27  Approximately how many years have y`) & 
+         `Q27  Approximately how many years have y` != "") %>%
+  filter(!is.na(`Q3[06]  [6  Overall quality of life in D`) & 
+         `Q3[06]  [6  Overall quality of life in D`) %>%
+  filter(`Q33  Would you say your total annual hou` != 9) %>%
+  filter(`Q30  Do you own or rent your current res` != 9) %>%
+  rename(
+    years = `Q27  Approximately how many years have y`,
+    quality = `Q3[06]  [6  Overall quality of life in D`,
+    income = `Q33  Would you say your total annual hou`
+  )
+
+```
+
+```{r warning = FALSE, message = FALSE, echo=FALSE}
+library(dplyr)
+durham_2 <- dplyr::select(durham_1, ID, years, quality)
+```
+
+```{r warning = FALSE, message = FALSE, echo=FALSE}
+durham_2 <- durham_2 %>%
+  mutate(quality = factor(quality, levels = 1:5, ordered = TRUE))
+
+model_ordinal_1 <- polr(quality ~ years, data = durham_2, Hess = TRUE)
+
+ctable <- coef(summary(model_ordinal_1)) %>%
+  round(3)
+p_values <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
+formatted_p <- ifelse(p_values < 0.001, "<0.001", formatC(p_values, format = "f", digits = 3))
+
+ctable_final <- cbind(ctable, "p value" = formatted_p)
+
+colnames(ctable_final)[colnames(ctable_final) == "Std. Error"] <- "Standard Error"
+colnames(ctable_final)[colnames(ctable_final) == "t value"] <- "t-value"
+colnames(ctable_final)[colnames(ctable_final) == "p value"] <- "p-value"
+```
+
+```{r warning = FALSE, message = FALSE, echo=FALSE}
+durham_3 <- dplyr::select(durham_1, ID, years, quality, income)
+durham_3 <- durham_3 %>%
+  mutate(
+    quality = factor(quality, levels = 1:5, ordered = TRUE),
+    income = as.factor(income),
+    years = as.numeric(years)
+  )
+model_interaction <- polr(quality ~ years * income, data = durham_3, Hess = TRUE)
+
+ctable_2 <- coef(summary(model_interaction))
+
+p_values_2 <- pnorm(abs(ctable_2[, "t value"]), lower.tail = FALSE) * 2
+formatted_p_2 <- ifelse(p_values_2 < 0.001, "<0.001", formatC(p_values_2, digits = 3, format = "f"))
+
+ctable_final_2 <- cbind(round(ctable_2[, 1:3], 3), "p value" = formatted_p_2)
+
+colnames(ctable_final_2)[colnames(ctable_final_2) == "Std. Error"] <- "Standard Error"
+colnames(ctable_final_2)[colnames(ctable_final_2) == "t value"] <- "t-value"
+colnames(ctable_final_2)[colnames(ctable_final_2) == "p value"] <- "p-value"
+```
+
+```{r warning = FALSE, message = FALSE, echo=FALSE}
+durham_4 <- durham_1 %>%
+    filter(!is.na(`Q30  Do you own or rent your current res`) & 
+         `Q30  Do you own or rent your current res` != "") %>%
+  rename(house = `Q30  Do you own or rent your current res`) %>%
+  mutate(
+    quality = factor(quality, levels = 1:5, ordered = TRUE),
+    house = factor(house),
+    Zip = as.factor(Zip),
+    years = as.numeric(years)) %>%
+  dplyr::select(ID, years, quality, house, Zip)
+
+model_mixed <- clmm(quality ~ years * house + (1 | Zip), data = durham_4, Hess = TRUE)
+```
+
+```{r warning = FALSE, message = FALSE, echo=FALSE}
+ranef_summary <- data.frame(
+  Group = "Zip",
+  Effect = "Intercept",
+  Variance = round(VarCorr(model_mixed)$Zip[1], 5),
+  "Standard Error" = round(attr(VarCorr(model_mixed)$Zip, "stddev")[1], 4),
+  Groups = length(unique(durham_4$Zip)))
+
+coefs_df <- as.data.frame(summary(model_mixed)$coefficients) %>%
+  rownames_to_column("Term") %>%
+  filter(!grepl("^\\|", Term)) %>%
+  rename(`Standard Error` = `Std. Error`) %>%
+  mutate(
+    Estimate = round(Estimate, 3),
+    `Standard Error` = round(`Standard Error`, 3),
+    `t-value` = round(`z value`, 3),
+    p_raw = 2 * (1 - pnorm(abs(`t-value`))),
+    p_value = ifelse(p_raw < 0.001, "<0.001", formatC(p_raw, format = "f", digits = 3)))
+```
+
+
+##### Introduction
+
+The analysis of this project may provide insight into relationships across quality of life for Durham residents. As well, it may help city administrators make decisions on improving certain areas within Durham and the city's strategic growth plan. The dataset comes from the 2022 City of Durham Resident Survey, an annual survey administered by the ETC Institute. A random sample of households in the city of Durham were mailed a survey, cover letter, and postage-paid return envelope. Questions to the survey included opinions on many facets of Durham's amenities, including quality of schooling, police protection, library access, condition of streets, etc. The original dataset featured 891 unique and independent observations from 226 questions from the survey.
+
+The key objectives of this project are to understand a potential association between quality of life and number of years that a resident has lived in Durham. Furthermore, this project attempts to recognize a relationship within quality of life based on the Durham residents' homeowner status, which may have specific location grouping factors within Durham (Zip Code). From examining previous research from a study of 79 European cities, it was determined that living in a city for increasing thresholds of 5 years result in higher levels of resident satisfaction (Weziak-Bialowolska 2016). Analysis of this dataset will see if similar conclusions can be drawn.
+
+##### Relevant Variables
+
+The response variable of interest was `quality`, a response to part 6 of question 3 (Q3-6) from the 2022 Resident Survey. This variable was the response to the residents' overall quality of life in Durham, with response options of (1) "very dissatisfied", (2) "dissatisfied", (3) "neutral", (4) "satisfied", and (5) "very satisfied". The other variables included in the project analysis were `ID` (identification number of the resident), `years`, a response to question 27 (Q27) of the survey indicating how many years the resident has lived in Durham, `income`, a response to question 33 (Q33) of the survey indicating total annual household income with response options of (1) under \$30,000, (2) \$30,000 - \$59,999, (3) \$60,000 - \$99,999, or (4) \$100,000 or more, `house`, a response to question 30 (Q30) of the survey indication if you (1) own or (2) rent your house, and `Zip`, the Zip Code of the residents' address within Durham.
+
+For data cleaning, all rows of relevant variables that were unreported or reported as a value of 9 (N/A) were removed from analysis. Certain variables used in analysis (`quality`, `years`, `income` and `house`) were renamed as such from their original question number, which allowed for more comprehensive model interpretation. The variables `quality`, `income`, and `house` were mutated to factors to account for their leveled responses, `Zip` was mutated to a factor to be used as a random intercept grouping variable in the mixed model, and `years` was mutated to be a continuous numerical variable. This left 759 observations.
+
+##### Methods
+
+To assess the first objective of understanding a possible association between quality of life and length of time a resident has lived in Durham, an ordinal logistic regression model was included. This is because while the `quality` response variable has natural order of responses numbered 1-5, the intervals between levels are not guaranteed to be equal. For example, the difference between “very dissatisfied” and “dissatisfied” (1-2) may not be the same as the difference between “neutral” and “satisfied” (3-4). The associated summary table output can be seen in Table 1. Seeing as quality of life is not solely dependent on the number of years living in a city, a second ordinal model was included to understand the interaction effect that years lived in Durham has with household income as seen in Table 2. To assess the second objective of potential relationship based on home ownership status and location of residence, a cumulative link model was included. This allowed for understanding the ordinal response variable `quality` based on the interaction effect of years lived in Durham and home ownership status with the random effect of Zip Code, as seen in Tables 3 and 4.
+
+##### Results
+
+The results from the first ordinal logistic regression model suggests that, holding else constant, each additional year a resident has lived in Durham is associated with 0.993 (e^-0.007) times the odds of being in a higher satisfactory category. This means that the odds of reporting greater satisfaction decrease by 0.7% for an additional year a resident lives in Durham. With a p-value of 0.037 which is less than the $\alpha = 0.05$ significance level, this provides statistically significant evidence that the number of years a resident lives in Durham is associated with their reported quality of life level (Table 1). Adding household income level as an interaction effect proved to not be statistically significant as all the `years x income` p-values were greater than the $\alpha = 0.05$ level. Holding else constant, residents in income level 3 (\$60,000 - \$99,999) are predicted to be 1.976 (e^0.681) times more likely to report a higher satisfactory category compared to the baseline income level 1 (under \$30,000). Holding else constant, residents in income level 4 (\$100,000 or more) are predicted to be 2.184 (e^0.781) times more likely to report a higher satisfactory category compared to the baseline income level 1 (under \$30,000). With p-values of 0.050 and 0.019 respectively, which is less than the $\alpha = 0.05$ level, this provides statistically significant evidence that income level is associated with a residents reported quality of life level (Table 2).
+
+The results from the cumulative link mixed model show that none of the fixed effects or the interaction effect between number of years lived in Durham and home ownership status were statistically meaningful in its association with quality of life after accounting for the Zip Code. However, the standard error of 0.300 for Zip Code suggests the underlying satisfaction intercept varies slightly by neighborhood (Table 3 and 4).
+
+##### Discussion
+
+Based on the results, the models were not very effective at explaining the relationships between quality of life in Durham and the data from the residents. The large p-values caused few interpretable predictor variables, and the interpretation for `years` in Table 1 conflicted with previous research. A potential issue with the data collection is that only those interested in completing the survey were the ones recorded, it was not a mandatory response. This could lead to biased results. Asking these types of questions within the census, or another form of required response would potentially increase reliability of the models and interpretability. Future work could analyze much more of the factors that were within the survey among a residents' lifestyle in understanding quality of life (access to schooling, public safety, affordability, maintenance, etc).
+
+```{r warning = FALSE, message = FALSE, echo=FALSE}
+durham_5 <- durham_4 %>%
+  mutate(Zip = as.character(Zip))
+
+ownership_by_zip <- durham_5 %>%
+  group_by(Zip) %>%
+  summarise(
+    total = n(),
+    owners = sum(house == 1, na.rm = TRUE),
+    prop_owners = owners / total
+  )
+
+library(tigris)
+library(sf)
+
+options(tigris_use_cache = TRUE)
+zips <- zctas(cb = TRUE, year = 2020)
+durham_zips <- zips %>%
+  filter(ZCTA5CE20 %in% ownership_by_zip$Zip)
+durham_map <- durham_zips %>%
+  left_join(ownership_by_zip, by = c("ZCTA5CE20" = "Zip"))
+```
+
+
+
+##### Appendix
+```{r warning = FALSE, message = FALSE, echo=FALSE}
+kable(ctable_final, digits = 3, caption = "Ordinal Logistic Regression Summary")
+knitr::kable(ctable_final_2, caption = "Ordinal Logistic Regression (Years × Income Interaction)")
+kable(coefs_df[, c("Term", "Estimate", "Standard Error", "t-value", "p_value")],
+  caption = "Fixed Effects: Mixed Ordinal Logistic Regression",
+  col.names = c("Term", "Estimate", "Standard Error", "t-value", "p-value"),
+  booktabs = TRUE)
+kable(ranef_summary, caption = "Random Effects Summary (Zip Code)", booktabs = TRUE)
+
+ggplot(durham_map) +
+  geom_sf(aes(fill = prop_owners), color = "black") +
+  geom_sf_text(aes(label = ZCTA5CE20), size = 3, color = "red") +
+  scale_fill_viridis_c(name = "Proportion Owners", option = "magma", direction = -1, na.value = "grey90") +
+  labs(
+    title = "Figure 1: Prevalence of Home Ownership by ZIP Code in Durham, NC",
+    subtitle = "Based on 2022 Resident Survey Data"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    axis.ticks = element_blank())
+```
+
+Despite not having a largely significant impact on reported quality of life, 
+
+##### Sources:
+- <https://live-durhamnc.opendata.arcgis.com/documents/2459a4fcb09345b1a6135321bf91eac9/about> - data source
+- <https://www.sciencedirect.com/science/article/pii/S0264275116301330> - Weziak-Bialowolska research
+- <https://r-graph-gallery.com/heatmap> - heat map guidance
+- <https://search.r-project.org/CRAN/refmans/tigris/html/zctas.html> - download zip code tabulation area (ZTCA)
+
+
